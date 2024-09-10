@@ -1,5 +1,5 @@
 *****Post PR DQR Template
-****Last upcreated_dated: Sept 2024
+****Last upcreated_dated: June 2024
 	
 	/*
 	purpose of DQR: 
@@ -34,33 +34,80 @@
 		quietly append using `temp'
 	} //Note: raw data imported should be from the TaroWorks form directly, checking for different versions of the form 
 	
+	import delimited "C:\Users\RamandhanMasudi\Downloads\FY24C1 DREAMS Business Exit.csv", varnames(1)
 	des,short
 
 	rename (surveystarttime surveyendtime createddate createdbyfullname bmcyclename businessgroupid businessgroupname bizexpensesbusinessexit bizrevenuebusinessexit bizinventorybusinessexit bizcashbusinessexit bizinputbusinessexit prbusinesstype sbplannedbiztype sbplannedbiztypenotstarted sbplannedbiztypestarted whydeviatedfromsbplan biztypegroupcurrentlyoperating additionalbiztypesdetail ofbosdroppedbusinessexit bosdroppedbusinessexit groupsizeatpr prgrantvaluebusinessexit prgrantusedbusinessexit businessparticipationstatus reasonunabletoviewrecords visitnumber recordskept recordsuptodate datacollectionmethod whysurveynotcompleted whysurveynotconducteddetail)(surveystarttime surveyendtime created_date mobileuser bm_cycle bg_id bg_name biz_expenses biz_revenue biz_inventory biz_cash biz_input pr_biz_type sb_planned_biz_type sbplannedbiztypenotstarted sbplannedbiztypestarted whydeviatedfromsbplan biztypegroupcurrentlyoperating additionalbiztypesdetail of_bos_dropped bos_dropped groupsizeatpr pr_value pr_invested businessparticipationstatus reason_unabletoview_records visit_number records_kept records_uptodate data_collection_method whysurvey_not_completed why_surveynotconducted_detail)
 		
 **check survey completion 
 	ta mobileuser, mi
-	
+	/*
+	eated By: Full Name |      Freq.     Percent        Cum.
+----------------------+-----------------------------------
+        Amina Drateru |         40       10.05       10.05
+Caroline Dawa Godfrey |         20        5.03       15.08
+     Esther Angunduru |         30        7.54       22.61
+       Hidaya Driciru |         41       10.30       32.91
+        Justine Ndugu |         41       10.30       43.22
+       Kenedy Munguci |         36        9.05       52.26
+        Nadia Manzubo |         30        7.54       59.80
+          Nenisa Gire |         20        5.03       64.82
+       Phillimon Waka |         80       20.10       84.92
+   Sadam Khamis Banya |         20        5.03       89.95
+         Swaibu Akimu |         20        5.03       94.97
+       Zulaika Majuma |         20        5.03      100.00
+----------------------+-----------------------------------
+                Total |        398      100.00
+*/
+
 	ta bm_cycle ,mi
 	
-	ta visit_number, mi //Note: confirm that all surveys were Post SB 2, if not then follow up with enum and insert feedback
+/*
+   BM Cycle Name |      Freq.     Percent        Cum.
+------------------------------+-----------------------------------
+          FY24C1 Albert Atama |         20        5.03        5.03
+         FY24C1 Annet Eyotaru |         20        5.03       10.05
+         FY24C1 Charles Baker |         21        5.28       15.33
+          FY24C1 Edward Amono |         20        5.03       20.35
+          FY24C1 Fauzu Ajidra |         20        5.03       25.38
+      FY24C1 Glorious Ayikoru |         20        5.03       30.40
+  FY24C1 Harmony Irene Faidah |         20        5.03       35.43
+           FY24C1 Hellen Muna |         20        5.03       40.45
+          FY24C1 Isaac Candia |         20        5.03       45.48
+FY24C1 Jackline Julius Jokudu |         20        5.03       50.50
+  FY24C1 Josline Peace Onyiru |         20        5.03       55.53
+          FY24C1 Leila Zalika |         20        5.03       60.55
+            FY24C1 Luke Avibo |         17        4.27       64.82
+           FY24C1 Majid Taban |         20        5.03       69.85
+        FY24C1 Modnes Akandru |         21        5.28       75.13
+          FY24C1 Nassa Hindum |         19        4.77       79.90
+          FY24C1 Nelson Adaku |         20        5.03       84.92
+     FY24C1 Santino Ojas Ware |         20        5.03       89.95
+            FY24C1 Umar Jurua |         20        5.03       94.97
+     FY24C1 Yesua Aliki Uriah |         20        5.03      100.00
+------------------------------+-----------------------------------
+                        Total |        398      100.00
+*/
+	
+ta visit_number, mi //Note: confirm that all surveys were Post SB 2, if not then follow up with enum and insert feedback
 	/* 
 	
-	 Visit Number |      Freq.     Percent        Cum.
-	--------------+-----------------------------------
-	Business Exit |          9      100.00      100.00
-	--------------+-----------------------------------
-			Total |          9      100.00
+	Visit Number |      Freq.     Percent        Cum.
+--------------+-----------------------------------
+Business Exit |        398      100.00      100.00
+--------------+-----------------------------------
+        Total |        398      100.00
+
 
 	*/
 	
 	ta whysurvey_not_completed	
 	/*		
-				   Why Survey Not Completed |      Freq.     Percent        Cum.
-	----------------------------------------+-----------------------------------
-	NOT APPLICABLE - THE SPOT CHECK IS BE.. |          9      100.00      100.00
-	----------------------------------------+-----------------------------------
-									  Total |          9      100.00
+	 Why Survey Not Completed |      Freq.     Percent        Cum.
+----------------------------------------+-----------------------------------
+NOT APPLICABLE - THE SPOT CHECK IS BE.. |        398      100.00      100.00
+----------------------------------------+-----------------------------------
+                                  Total |        398      100.00
 
 	*/
 	ta why_surveynotconducted_detail if whysurvey_not_completed == "Other"
@@ -69,20 +116,60 @@
 	ta bm_cycle if visit_number == "Business Exit"
 	/*
 
-	  BM Cycle Name |      Freq.     Percent        Cum.
-	-------------------+-----------------------------------
-	FY24C1 Hellen Muna |          9      100.00      100.00
-	-------------------+-----------------------------------
-				 Total |          9      100.00
-
+   BM Cycle Name |      Freq.     Percent        Cum.
+------------------------------+-----------------------------------
+          FY24C1 Albert Atama |         20        5.03        5.03
+         FY24C1 Annet Eyotaru |         20        5.03       10.05
+         FY24C1 Charles Baker |         21        5.28       15.33
+          FY24C1 Edward Amono |         20        5.03       20.35
+          FY24C1 Fauzu Ajidra |         20        5.03       25.38
+      FY24C1 Glorious Ayikoru |         20        5.03       30.40
+  FY24C1 Harmony Irene Faidah |         20        5.03       35.43
+           FY24C1 Hellen Muna |         20        5.03       40.45
+          FY24C1 Isaac Candia |         20        5.03       45.48
+FY24C1 Jackline Julius Jokudu |         20        5.03       50.50
+  FY24C1 Josline Peace Onyiru |         20        5.03       55.53
+          FY24C1 Leila Zalika |         20        5.03       60.55
+            FY24C1 Luke Avibo |         17        4.27       64.82
+           FY24C1 Majid Taban |         20        5.03       69.85
+        FY24C1 Modnes Akandru |         21        5.28       75.13
+          FY24C1 Nassa Hindum |         19        4.77       79.90
+          FY24C1 Nelson Adaku |         20        5.03       84.92
+     FY24C1 Santino Ojas Ware |         20        5.03       89.95
+            FY24C1 Umar Jurua |         20        5.03       94.97
+     FY24C1 Yesua Aliki Uriah |         20        5.03      100.00
+------------------------------+-----------------------------------
+                        Total |        398      100.00
 
 	*/
-
-
 keep if visit_number == "Business Exit"	
+
 **confirm no business groups were surveyed more than once 
 	duplicates report bg_id
-	//None
+/*
+ --------------------------------------
+   copies | observations       surplus
+----------+---------------------------
+        1 |          394             0
+        2 |            4             2
+--------------------------------------
+*/
+	duplicates tag bg_id, gen(Dups)
+	ta Dups
+	li surveystarttime mobileuser bm_cycle bg_id bg_name if Dups>=1
+	
+/*
+     +---------------------------------------------------------------------------------+
+     |   surveystarttime       mobileuser                bm_cycle   bg_id      bg_name |
+     |---------------------------------------------------------------------------------|
+ 53. | 23/08/2024, 10:35    Justine Ndugu    FY24C1 Charles Baker   89013   Mungu Feni |
+ 54. | 29/08/2024, 12:28    Justine Ndugu    FY24C1 Charles Baker   89013   Mungu Feni |
+284. | 26/08/2024, 15:26   Hidaya Driciru   FY24C1 Modnes Akandru   88033    Mungufeni |
+285. | 26/08/2024, 16:11   Hidaya Driciru   FY24C1 Modnes Akandru   88033    Mungufeni |
+     +---------------------------------------------------------------------------------+
+*/
+	drop if bg_name=="Mungu Feni" & surveystarttime=="23/08/2024, 10:35" // Data was mistakenly collected under the BG.
+    drop if bg_name=="Mungufeni" & surveystarttime=="26/08/2024, 16:11" // Data was collected twice due confusions from the side of BOs
 
 **check timestamps of surveys and confirm no dubious submissions 
 	gen str time_sta = substr(surveystarttime, 1,16)	 
