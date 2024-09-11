@@ -191,13 +191,14 @@ keep if visit_number == "Business Exit"
 **investigate key variables
 	*record keeping
 	ta records_kept, mi
+	li bm_cycle bg_id bg_name if records_kept=="No"
 	ta records_uptodate, mi //Note: confirm that all who said yes to having business records, answered this question 
 	ta reason_unabletoview_records, mi //Note: flag any unusual reasons and send to BMs
 	 
 	*group memberships
 	ta bos_dropped, mi
 	ta of_bos_dropped, mi //Note: confirm that all who said yes to members dropping, answered this question 
-
+    li bm_cycle bg_id bg_name records_kept bos_dropped of_bos_dropped if bos_dropped=="Yes"
 	preserve
 		keep if !missing(of_bos_dropped)
 		keep bg_id bg_name groupsizeatpr bos_dropped of_bos_dropped
@@ -207,9 +208,11 @@ keep if visit_number == "Business Exit"
 	
 	*pr grant use
 	ta pr_value, mi //Note: confirm these are all typical amounts given for PR
-	
+	replace pr_value=240000 if pr_value==24000// type mismatch for Enumerator
 	ta pr_invested, mi 
-
+	li bm_cycle bg_id bg_name pr_invested if pr_invested<=200000// Most Businesses Fy24C1 Edward Amono, Tika 4 invested less PR Grand
+    replace pr_invested=240000 if pr_invested==2140000
+	replace pr_invested=240000 if pr_invested==244000
 	gen proportionprused = pr_invested / pr_value //Note: create var for proportion of PR used to confirm no errors
 	li mobileuser bm_cycle bg_id bg_name  pr_invested biz_expenses biz_revenue if proportionprused > 1, abb(20)
 		
