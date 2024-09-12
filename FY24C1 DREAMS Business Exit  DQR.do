@@ -19,24 +19,11 @@
 	global fy24c1prdqr "/Users/`user'/Box/M&E/3- Implementation Partnerships/DREAMS/Uganda/FY24C1/Cycle Report Data/Businesses/Post PR Spot Checks"	
 	//Note: please use forward slashes to accodomate both Mac and PCs
 	
-
-
 **import raw data 
-	clear
-	local csvfiles: dir "$fy24c1prdqr/SF Report" files "*.csv"
-	foreach file of local csvfiles {
-		preserve
-		quietly import delimited using "$fy24c1prdqr/SF Report/`file'" ,clear
-		//quietly tostring livestock_land_size other_resources_used other_resource diversify_types diversify why_deviate businesstype_actual businesstype_pr_not_started businesstype_pr_started businesstype_pr records_noview_reason gps_coordinateslatitudeandlongit other_disposal drops records_upcreated_dated records nosurvey_reason failed_reason, replace //Note: convert vars to string for clean appends
-		tempfile temp
-		quietly save `temp',replace
-		restore
-		quietly append using `temp'
-	} //Note: raw data imported should be from the TaroWorks form directly, checking for different versions of the form 
-	
+	 
 	import delimited "C:\Users\RamandhanMasudi\Downloads\FY24C1 DREAMS Business Exit.csv", varnames(1)
 	des,short
-
+    br
 	rename (surveystarttime surveyendtime createddate createdbyfullname bmcyclename businessgroupid businessgroupname bizexpensesbusinessexit bizrevenuebusinessexit bizinventorybusinessexit bizcashbusinessexit bizinputbusinessexit prbusinesstype sbplannedbiztype sbplannedbiztypenotstarted sbplannedbiztypestarted whydeviatedfromsbplan biztypegroupcurrentlyoperating additionalbiztypesdetail ofbosdroppedbusinessexit bosdroppedbusinessexit groupsizeatpr prgrantvaluebusinessexit prgrantusedbusinessexit businessparticipationstatus reasonunabletoviewrecords visitnumber recordskept recordsuptodate datacollectionmethod whysurveynotcompleted whysurveynotconducteddetail)(surveystarttime surveyendtime created_date mobileuser bm_cycle bg_id bg_name biz_expenses biz_revenue biz_inventory biz_cash biz_input pr_biz_type sb_planned_biz_type sbplannedbiztypenotstarted sbplannedbiztypestarted whydeviatedfromsbplan biztypegroupcurrentlyoperating additionalbiztypesdetail of_bos_dropped bos_dropped groupsizeatpr pr_value pr_invested businessparticipationstatus reason_unabletoview_records visit_number records_kept records_uptodate data_collection_method whysurvey_not_completed why_surveynotconducted_detail)
 		
 **check survey completion 
@@ -97,7 +84,6 @@ ta visit_number, mi //Note: confirm that all surveys were Post SB 2, if not then
 Business Exit |        398      100.00      100.00
 --------------+-----------------------------------
         Total |        398      100.00
-
 
 	*/
 	
@@ -170,7 +156,7 @@ keep if visit_number == "Business Exit"
 */
 	drop if bg_name=="Mungu Feni" & surveystarttime=="23/08/2024, 10:35" // Data was mistakenly collected under the BG.
     drop if bg_name=="Mungufeni" & surveystarttime=="26/08/2024, 16:11" // Data was collected twice due confusions from the side of BOs
-
+    drop if bg_id==88072 //The group wasn't funded for PR
 **check timestamps of surveys and confirm no dubious submissions 
 	gen str time_sta = substr(surveystarttime, 1,16)	 
 	gen double dt_start = clock(time_sta, "DMY hm")
@@ -208,29 +194,26 @@ keep if visit_number == "Business Exit"
 	
 	*pr grant use
 	ta pr_value, mi //Note: confirm these are all typical amounts given for PR
-	replace pr_value=240000 if pr_value==24000// type mismatch for Enumerator
+	replace pr_value=240000 if pr_value==24000 // type mismatch for Enumerator
 	ta pr_invested, mi 
-	li bm_cycle bg_id bg_name pr_invested if pr_invested<=200000// Most Businesses Fy24C1 Edward Amono, Tika 4 invested less PR Grand
-    replace pr_invested=240000 if pr_invested==2140000
+	li bm_cycle bg_id bg_name pr_invested if pr_invested<=200000 // Most Businesses Fy24C1 Edward Amono, Tika 4 invested less PR Grand
+    li bm_cycle bg_id bg_name pr_invested if pr_invested>240000 // Most Businesses Fy24C1 Edward Amono, Tika 4 invested less PR Grand
+	replace pr_invested=240000 if pr_invested==2140000
 	replace pr_invested=240000 if pr_invested==244000
 	gen proportionprused = pr_invested / pr_value //Note: create var for proportion of PR used to confirm no errors
-	li mobileuser bm_cycle bg_id bg_name  pr_invested biz_expenses biz_revenue if proportionprused > 1, abb(20)
-		
-	/*
-		
-
-	*/ // These two Business groups can not be located during and after the survey 
-
-		
-// 	Note: insert any feedback and make upcreated_dates in SF once manager has reviewed
+	ta proportionprused,mi	//Confirmed from the Enumerators about the less PR invested
+	li bm_cycle mobileuser bg_id bg_name pr_invested proportionprused if proportionprused<1
 	
 	*business value    
 	summ biz_input 
 		ta biz_input //Note: look for any values like 99 or 999 which need to upcreated_dated to 0
-	
+	    br bm_cycle mobileuser biz_input pr_biz_type biz_inventory biz_cash records_uptodate bg_id bg_name pr_invested proportionprused if biz_input<200000
+	    br bm_cycle mobileuser biz_input pr_biz_type biz_inventory biz_cash records_uptodate bg_id bg_name pr_invested proportionprused if biz_input>1000000
+	    replace biz_input=185000 if bg_id==88129 // Enumerator forgot to include value for the phones worth 165000
+
 	summ biz_inventory 
 		ta biz_inventory //Note: look for any values like 99 or 999 which need to upcreated_dated to 0
-	
+	     
 	summ biz_cash
 		ta biz_cash //Note: look for any values like 99 or 999 which need to upcreated_dated to 0
 	
