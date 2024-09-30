@@ -21,7 +21,7 @@
 	
 **import raw data 
 	 
-	import delimited "C:\Users\RamandhanMasudi\Downloads\FY24C1 DREAMS Business Exit.csv", varnames(1)
+	import delimited "C:/Users/RamandhanMasudi/Downloads/FY24C1 DREAMS Business Exit.csv", varnames(1)
 	des,short
     br
 	rename (surveystarttime surveyendtime createddate createdbyfullname bmcyclename businessgroupid businessgroupname bizexpensesbusinessexit bizrevenuebusinessexit bizinventorybusinessexit bizcashbusinessexit bizinputbusinessexit prbusinesstype sbplannedbiztype sbplannedbiztypenotstarted sbplannedbiztypestarted whydeviatedfromsbplan biztypegroupcurrentlyoperating additionalbiztypesdetail ofbosdroppedbusinessexit bosdroppedbusinessexit groupsizeatpr prgrantvaluebusinessexit prgrantusedbusinessexit businessparticipationstatus reasonunabletoviewrecords visitnumber recordskept recordsuptodate datacollectionmethod whysurveynotcompleted whysurveynotconducteddetail)(surveystarttime surveyendtime created_date mobileuser bm_cycle bg_id bg_name biz_expenses biz_revenue biz_inventory biz_cash biz_input pr_biz_type sb_planned_biz_type sbplannedbiztypenotstarted sbplannedbiztypestarted whydeviatedfromsbplan biztypegroupcurrentlyoperating additionalbiztypesdetail of_bos_dropped bos_dropped groupsizeatpr pr_value pr_invested businessparticipationstatus reason_unabletoview_records visit_number records_kept records_uptodate data_collection_method whysurvey_not_completed why_surveynotconducted_detail)
@@ -98,7 +98,7 @@ NOT APPLICABLE - THE SPOT CHECK IS BE.. |        398      100.00      100.00
 	*/
 	ta why_surveynotconducted_detail if whysurvey_not_completed == "Other"
 	//None
-	
+
 	ta bm_cycle if visit_number == "Business Exit"
 	/*
 
@@ -126,7 +126,6 @@ FY24C1 Jackline Julius Jokudu |         20        5.03       50.50
      FY24C1 Yesua Aliki Uriah |         20        5.03      100.00
 ------------------------------+-----------------------------------
                         Total |        398      100.00
-
 	*/
 keep if visit_number == "Business Exit"	
 
@@ -161,7 +160,7 @@ keep if visit_number == "Business Exit"
 	gen str time_sta = substr(surveystarttime, 1,16)	 
 	gen double dt_start = clock(time_sta, "DMY hm")
 	format dt_start %tc
-	
+
 	gen str time_end = substr(surveyendtime, 1,16)
 	gen double dt_end = clock(time_end, "DMY hm")
 	format dt_end %tc
@@ -185,14 +184,8 @@ keep if visit_number == "Business Exit"
 	ta bos_dropped, mi
 	ta of_bos_dropped, mi //Note: confirm that all who said yes to members dropping, answered this question 
     li bm_cycle bg_id bg_name records_kept bos_dropped of_bos_dropped if bos_dropped=="Yes"
-	preserve
-		keep if !missing(of_bos_dropped)
-		keep bg_id bg_name groupsizeatpr bos_dropped of_bos_dropped
-		order bg_id bg_name groupsizeatpr bos_dropped of_bos_dropped
-		save "$fy24c1prdqr/Dta/FY24C1 BPS BOs dropped.dta", replace
-	restore
 	
-	*pr grant use
+	*pr  grant use
 	ta pr_value, mi //Note: confirm these are all typical amounts given for PR
 	replace pr_value=240000 if pr_value==24000 // type mismatch for Enumerator
 	ta pr_invested, mi 
@@ -210,7 +203,7 @@ keep if visit_number == "Business Exit"
 	    br bm_cycle mobileuser biz_input pr_biz_type biz_inventory biz_cash records_uptodate bg_id bg_name pr_invested proportionprused if biz_input<200000
 	    br bm_cycle mobileuser biz_input pr_biz_type biz_inventory biz_cash records_uptodate bg_id bg_name pr_invested proportionprused if biz_input>1000000
 	    replace biz_input=185000 if bg_id==88129 // Enumerator forgot to include value for the phones worth 165000
-
+        replace biz_input=35500 if hh_id==88129
 	summ biz_inventory 
 		ta biz_inventory //Note: look for any values like 99 or 999 which need to upcreated_dated to 0
 	     
