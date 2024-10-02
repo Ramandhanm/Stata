@@ -1,5 +1,5 @@
 *****Post PR DQR Template
-****Last upcreated_dated: June 2024
+****Last upcreated_dated: Sept 2024
 	
 	/*
 	purpose of DQR: 
@@ -200,20 +200,25 @@ keep if visit_number == "Business Exit"
 	*business value    
 	summ biz_input 
 		ta biz_input //Note: look for any values like 99 or 999 which need to upcreated_dated to 0
-	    br bm_cycle mobileuser biz_input pr_biz_type biz_inventory biz_cash records_uptodate bg_id bg_name pr_invested proportionprused if biz_input<200000
-	    br bm_cycle mobileuser biz_input pr_biz_type biz_inventory biz_cash records_uptodate bg_id bg_name pr_invested proportionprused if biz_input>1000000
+	    li bm_cycle mobileuser biz_input pr_biz_type biz_inventory biz_cash records_uptodate bg_id bg_name pr_invested proportionprused if biz_input<200000
+	    li bm_cycle mobileuser biz_input pr_biz_type biz_inventory biz_cash records_uptodate bg_id bg_name pr_invested proportionprused if biz_input>1000000
 	    replace biz_input=185000 if bg_id==88129 // Enumerator forgot to include value for the phones worth 165000
-        replace biz_input=35500 if hh_id==88129
+        
 	summ biz_inventory 
 		ta biz_inventory //Note: look for any values like 99 or 999 which need to upcreated_dated to 0
-	     
+	    li bm_cycle mobileuser biz_input pr_biz_type biz_inventory biz_cash records_uptodate bg_id bg_name pr_invested proportionprused if biz_inventory<=100000
+        // Groups with zero inputs are mostly crops businesses with crops yet to be harvested
 	summ biz_cash
 		ta biz_cash //Note: look for any values like 99 or 999 which need to upcreated_dated to 0
-	
+	  	li bm_cycle mobileuser biz_input pr_biz_type biz_inventory biz_cash records_uptodate bg_id bg_name pr_invested proportionprused if biz_cash<=100000
+        br bm_cycle mobileuser biz_input pr_biz_type biz_inventory biz_cash records_uptodate bg_id bg_name pr_invested proportionprused if biz_cash>=2000000
+        // biz_input seem to match with the business types & the business inputs & inventories
 	gen bizvalue = biz_input + biz_inventory + biz_cash
 		summ bizvalue, detail
 		ta bizvalue	//Note: flag any outliters that require follow up
-	
+	    br bm_cycle mobileuser biz_input pr_biz_type biz_inventory biz_cash records_uptodate bg_id bg_name bizvalue pr_invested proportionprused if bizvalue<=500000
+	    br bm_cycle mobileuser biz_input pr_biz_type biz_inventory biz_cash records_uptodate bg_id bg_name bizvalue pr_invested proportionprused if bizvalue>=2000000
+        // bizvalue matches with the business types 
 	*business profit   
 	summ biz_revenue 
 		ta biz_revenue, mi //Note: look for any values like 99 or 999 which need to upcreated_dated to 0
