@@ -222,17 +222,34 @@ keep if visit_number == "Business Exit"
 	*business profit   
 	summ biz_revenue 
 		ta biz_revenue, mi //Note: look for any values like 99 or 999 which need to upcreated_dated to 0
-	
+	    br bm_cycle mobileuser biz_input pr_biz_type biz_inventory biz_cash records_uptodate bg_id bg_name bizvalue biz_revenue pr_invested proportionprused if biz_revenue<=1000000
+	    //Biz_Value matches with the biz_revenues
+	    br bm_cycle mobileuser biz_input pr_biz_type biz_inventory biz_cash records_uptodate bg_id bg_name bizvalue biz_expenses biz_revenue pr_invested proportionprused if biz_revenue>=10000000
+		//Enumerators got all the information from the record books
+		
 	summ biz_expenses
 		ta biz_expenses, mi //Note: look for any values like 99 or 999 which need to upcreated_dated to 0
 	
 	gen bizprofits = biz_revenue - biz_expenses
 		summ bizprofits
 		ta bizprofits //Note: flag any outliters for BMs i.e. 0 or negative profits 
-		
+		li mobileuser bm_cycle bg_id bg_name  pr_invested biz_expenses biz_revenue if bizprofits==-398000
+		li mobileuser bm_cycle bg_id bg_name  pr_invested biz_expenses biz_revenue if bizprofits==-244000
 		li mobileuser bm_cycle bg_id bg_name  pr_invested biz_expenses biz_revenue if bizprofits > 10000000, abb(20)
-	
-	save "$fy24c1prdqr/Dta/FY24C1 BPS DQR.dta", replace //Note save clean dta 
-	
+	 /*
+	 +------------------------------------------------------------------------------------------------------------+
+     |  mobileuser          bm_cycle                       bg_id   bg_name   pr_inv~d   biz_ex~s   biz_re~e       |
+     |------------------------------------------------------------------------------------------------------------|
+ 99. | Nenisa Gire          FY24C1 Santino Ojas Ware       88532   Iyete Bg  240000     3910000    3512000        |
+     +------------------------------------------------------------------------------------------------------------+
+332. | Sadam Khamis Banya   FY24C1 Jackline Julius Jokudu  88391   Unity     240000     1824000    1580000        |
+     +------------------------------------------------------------------------------------------------------------+
+    */
+      replace biz_revenue=3910000 if bg_id==88532
+	  replace biz_expense=3512000 if bg_id==88532  // Mistakenly recorded expense in place of revenues during data collection
+	  replace biz_revenue=1824000 if bg_id==88391
+	  replace biz_expense=1580000 if bg_id==88391
+	save "C:\Users\RamandhanMasudi\Desktop\Stata\FY24C1 DREAMS Business Exit DQR .csv", replace //Note save clean dta 
+
 //Note: SF Upcreated_dates should be done manually according to the DQR issues addressed above once the DQR has been reviewed and approved by the manager 
 
