@@ -252,4 +252,5 @@ keep if visit_number == "Business Exit"
 	save "C:\Users\RamandhanMasudi\Desktop\Stata\FY24C1 DREAMS Business Exit DQR .csv", replace //Note save clean dta 
 
 //Note: SF Upcreated_dates should be done manually according to the DQR issues addressed above once the DQR has been reviewed and approved by the manager 
+os. remove("STATA") 
 
