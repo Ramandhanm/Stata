@@ -176,7 +176,7 @@ keep if visit_number == "Business Exit"
 **investigate key variables
 	*record keeping
 	ta records_kept, mi
-	li bm_cycle bg_id bg_name if records_kept=="No"
+	li bm_cycle mobileuser bg_id bg_name if records_kept=="No"
 	ta records_uptodate, mi //Note: confirm that all who said yes to having business records, answered this question 
 	ta reason_unabletoview_records, mi //Note: flag any unusual reasons and send to BMs
 	 
